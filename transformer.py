@@ -27,10 +27,10 @@ eval_interval = 200  # How often to evaluate the model on validation data
 learning_rate = 3e-3 # Initial learning rate for the Adam optimizer
 
 # Model architecture parameters
-block_size = 256     # Maximum sequence length the model can process (context window)
-n_embd = 256        # Dimension of embedding vectors and hidden layers
+block_size = 128     # Maximum sequence length the model can process (context window)
+n_embd = 128        # Dimension of embedding vectors and hidden layers
 n_head = 2          # Number of attention heads in multi-head attention
-n_layer = 2         # Number of transformer blocks stacked together
+n_layer = 1         # Number of transformer blocks stacked together
 dropout = 0.2       # Probability of dropping connections during training to prevent overfitting
 
 # Notes:

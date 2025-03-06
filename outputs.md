@@ -30,5 +30,13 @@ dropout = 0.2
 ```
 Outputs are
 ```
+Input: "23"
+Output: "23:19 s to people; new the cousla, and my alst at the Lamanits the orit haven.
 
+1::9 Yeacording to Beh"
+Input: " "
+Output: "the words thausht they saw they ares st trestly that a children th of thout their with becomenals. A"
+Output: "on hat toracited th the prissnnites; fore to be word he theire shold, als tar be als the age prosent"
 ```
+
+Interestingly, the larger model is not as good!
