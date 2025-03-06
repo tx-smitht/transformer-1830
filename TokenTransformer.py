@@ -7,31 +7,27 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
-import torch_directml
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 # Set the device
-device = torch_directml.device()  # Creates a DirectML device
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
 
 # Hyperparameters for the transformer model
 
-# Training parameters
-batch_size = 48      # Number of sequences processed in parallel during training
+# Training parameters (adjusted for token-level processing)
+batch_size = 32      # Reduced batch size since sequences are now longer
+block_size = 64      # Context window in tokens
+n_embd = 384        # Increased embedding size for token-level processing
+n_head = 6          # Number of attention heads
+n_layer = 6         # Number of transformer blocks
+dropout = 0.2       # Dropout rate
 max_iters = 3000     # Total number of training iterations
-eval_interval = 200  # How often to evaluate the model on validation data
-learning_rate = 3e-3 # Initial learning rate for the Adam optimizer
-
-# Model architecture parameters
-block_size = 128     # Maximum sequence length the model can process (context window)
-n_embd = 128        # Dimension of embedding vectors and hidden layers
-n_head = 2          # Number of attention heads in multi-head attention
-n_layer = 1         # Number of transformer blocks stacked together
-dropout = 0.2       # Probability of dropping connections during training to prevent overfitting
+eval_interval = 300  # How often to evaluate the model on validation data
+learning_rate = 3e-4 # Initial learning rate for the Adam optimizer
 
 # Notes:
 # - Larger batch_size increases training speed but requires more memory
@@ -40,40 +36,49 @@ dropout = 0.2       # Probability of dropping connections during training to pre
 # - Higher dropout helps prevent overfitting but too high can hurt learning
 
 # Data Processing
-class CharacterTokenizer:
-    """
-    A character-level tokenizer that converts text to and from numerical indices.
-    
-    This tokenizer creates a vocabulary from individual characters in the input text,
-    mapping each unique character to a unique integer index. It provides methods to:
-    - Build the vocabulary from input text (fit)
-    - Convert text to a sequence of indices (encode)
-    - Convert indices back to text (decode)
-    
-    The vocabulary includes all unique characters found in the training text.
-    """
+class SimpleTokenizer:
+    """A basic token-level tokenizer that splits on whitespace and punctuation"""
     def __init__(self):
-        self.chars = []
+        self.tokens = []
         self.stoi = {}
         self.itos = {}
+        self.special_tokens = {
+            '<PAD>': 0,
+            '<UNK>': 1,
+            '<BOS>': 2,
+            '<EOS>': 3,
+        }
     
     def fit(self, text):
-        # Create a sorted list of unique characters in the text
-        chars = sorted(list(set(text)))
-        self.chars = chars
-        # Create a mapping from character to index
-        self.stoi = {ch: i for i, ch in enumerate(chars)}
-        # Create a mapping from index to character
-        self.itos = {i: ch for i, ch in enumerate(chars)}
-        self.vocab_size = len(chars)
+        # Add special tokens
+        self.stoi = self.special_tokens.copy()
+        self.itos = {v: k for k, v in self.special_tokens.items()}
+        
+        # Split text into tokens
+        import re
+        words = re.findall(r'\b\w+\b|[^\w\s]', text)
+        unique_tokens = sorted(set(words))
+        
+        # Create mappings starting after special tokens
+        next_idx = len(self.special_tokens)
+        for token in unique_tokens:
+            if token not in self.stoi:
+                self.stoi[token] = next_idx
+                self.itos[next_idx] = token
+                next_idx += 1
+        
+        self.vocab_size = len(self.stoi)
+        print(f"Vocabulary size (including special tokens): {self.vocab_size}")
     
     def encode(self, text):
-        # Convert text to a list of indices
-        return [self.stoi[c] for c in text]
+        # Split text and convert to token indices
+        import re
+        words = re.findall(r'\b\w+\b|[^\w\s]', text)
+        return [self.stoi.get(word, self.special_tokens['<UNK>']) for word in words]
     
     def decode(self, ids):
-        # Convert a list of indices back to text
-        return ''.join([self.itos[i] for i in ids])
+        # Convert token indices back to text
+        return ' '.join([self.itos[id] for id in ids])
 
 class TextDataset(Dataset):
     """
@@ -340,10 +345,10 @@ def train_model():
     text = load_data_from_files(data_path)
     print(f"Total text length: {len(text)} characters")
     
-    tokenizer = CharacterTokenizer()
+    tokenizer = SimpleTokenizer()
     tokenizer.fit(text)
     data = tokenizer.encode(text)
-    print(f"Vocabulary size: {tokenizer.vocab_size}")
+    print(f"Total tokens: {len(data)}")
     
     # Create train/val split
     n = len(data)
