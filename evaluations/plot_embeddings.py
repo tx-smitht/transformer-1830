@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 import os
 import sys
 
-model_name = 'best_model.pth'
+model_name = 'final_model_384_6.pth'
 
 # Get the root directory (one level up from evaluations/)
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Get current script path
@@ -75,7 +75,7 @@ plt.title('Word Embeddings Visualized in 2D')
 plt.xlabel('First Principal Component')
 plt.ylabel('Second Principal Component')
 plt.grid(True)
-plt.savefig(os.path.join(checkpoint_path, 'word_embeddings.png'))
+plt.savefig('evaluations/word_embeddings.png')
 plt.show()
 
 # Print explained variance ratio

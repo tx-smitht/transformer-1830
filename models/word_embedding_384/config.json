@@ -1,0 +1,5 @@
+{
+  "vocab_size": 5999,
+  "embedding_dim": 384,
+  "model_type": "word_embedding"
+}
