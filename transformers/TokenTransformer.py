@@ -444,9 +444,9 @@ def train_model():
         plt.title('Training and Validation Loss Over Time')
         plt.legend()
         plt.grid(True)
-        plt.savefig('training_loss.png')
+        plt.savefig('evaluations/training_loss.png')
         plt.close()
-        print("Loss plot saved as 'training_loss.png'")
+        print("Loss plot saved as 'evaluations/training_loss.png'")
 
 if __name__ == "__main__":
     train_model()
