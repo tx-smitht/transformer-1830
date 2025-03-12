@@ -35,7 +35,7 @@ def extract_and_save_embedding_model(model_path, save_dir):
 
     # Create tokenizer
     # Read text file
-    with open('/Users/Tom/Documents/dev/deep-learning-edu/1828-embedding-model/transformer-1830/data/book_of_mormon.txt', 'r', encoding='utf-8') as f:
+    with open('../data/book_of_mormon.txt', 'r', encoding='utf-8') as f:
         text = f.read()
 
     # Define the tokenizer
@@ -88,8 +88,8 @@ def extract_and_save_embedding_model(model_path, save_dir):
         print(f"Saved tokenizer to {save_dir}")
 
 if __name__ == "__main__":
-    model_path = "models/final_model_384_6.pth"  # Path to your trained transformer model
-    tokenizer_path = "models/tokenizer.pkl"  # Path to your saved tokenizer (if available)
-    save_dir = f"models/word_embedding_{n_embd}"  # Directory to save the embedding model
+    model_path = "../models/final_model_384_6.pth"  # Path to your trained transformer model
+    tokenizer_path = "../models/tokenizer.pkl"  # Path to your saved tokenizer (if available)
+    save_dir = f"../models/word_embedding_{n_embd}"  # Directory to save the embedding model
     
     extract_and_save_embedding_model(model_path, save_dir)

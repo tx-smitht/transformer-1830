@@ -2,6 +2,7 @@ import os
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+import json
 
 class WordEmbeddingModel(nn.Module):
     """
@@ -90,19 +91,28 @@ class WordEmbeddingModel(nn.Module):
     @classmethod
     def from_pretrained(cls, model_path):
         """
-        Load a model from a Hugging Face-style directory
+        Load a model from a Hugging Face-style directory or repository ID
         """
-        import json
+        # Handle both local path and Hugging Face repo_id
+        if not os.path.isdir(model_path):
+            # This is a Hugging Face repo ID, download the files
+            from huggingface_hub import hf_hub_download
+            config_path = hf_hub_download(repo_id=model_path, filename="config.json")
+            weights_path = hf_hub_download(repo_id=model_path, filename="pytorch_model.bin")
+        else:
+            # This is a local directory
+            config_path = os.path.join(model_path, "config.json")
+            weights_path = os.path.join(model_path, "pytorch_model.bin")
         
         # Load config
-        with open(os.path.join(model_path, "config.json"), "r") as f:
+        with open(config_path, "r") as f:
             config = json.load(f)
         
         # Create model
         model = cls(config["vocab_size"], config["embedding_dim"])
         
         # Load weights
-        state_dict = torch.load(os.path.join(model_path, "pytorch_model.bin"))
+        state_dict = torch.load(weights_path, map_location="cpu")
         model.load_state_dict(state_dict)
         
         return model

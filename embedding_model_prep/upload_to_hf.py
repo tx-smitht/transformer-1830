@@ -58,7 +58,7 @@ def upload_to_huggingface(model_dir, repo_name, hf_token=None):
 
 if __name__ == "__main__":
     model_dir = "models/word_embedding_384"  # Directory containing saved model
-    repo_name = "tx-smitht/word-embeddings-1830"
+    repo_name = "user/repo_name"
     
     # Get the Hugging Face token from environment for security
     # You can set this with: export HUGGINGFACE_TOKEN=your_token

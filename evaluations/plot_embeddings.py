@@ -22,7 +22,7 @@ device = torch.device('mps' if torch.backends.mps.is_available() else
                      ('cuda' if torch.cuda.is_available() else 'cpu'))
 print(f"Using device: {device}")
 
-with open('/Users/Tom/Documents/dev/deep-learning-edu/1828-embedding-model/transformer-1830/data/book_of_mormon.txt', 'r', encoding='utf-8') as f:
+with open('../data/book_of_mormon.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
 tokenizer = SimpleTokenizer()

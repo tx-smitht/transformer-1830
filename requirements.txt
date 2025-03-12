@@ -4,3 +4,4 @@ matplotlib
 tqdm
 torch-directml
 scikit-learn
+huggingface_hub

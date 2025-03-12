@@ -13,7 +13,7 @@ from transformers import DecoderTransformer, SimpleTokenizer
 from config import *
 
 
-model_path = 'models/final_model_384_6.pth'
+model_path = '../models/final_model_384_6.pth'
 
 # Set device
 device = torch.device('mps' if torch.backends.mps.is_available() else 
@@ -37,8 +37,7 @@ def generate_text(prompt, max_new_tokens=100, temperature=temperature, top_k=top
     return tokenizer.decode(generated[0].tolist())
 
 # Initialize tokenizer with the same text used for training
-# Replace this path with your training data path
-with open('/Users/Tom/Documents/dev/deep-learning-edu/1828-embedding-model/transformer-1830/data/book_of_mormon.txt', 'r', encoding='utf-8') as f:
+with open('../data/book_of_mormon.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
 tokenizer = SimpleTokenizer()
@@ -60,11 +59,11 @@ model.load_state_dict(torch.load(model_path))
 print(f"Model loaded from {model_path}")
 
 # Test the text generation
-prompt = "The Lord said"
+prompt = "58"
 generated_text = generate_text(
     prompt,
     max_new_tokens=50,
-    temperature=0.9,  # You can override the default temperature
-    top_k=10          # You can override the default top_k
+    temperature=0.9,
+    top_k=10        
 )
 print(generated_text)
